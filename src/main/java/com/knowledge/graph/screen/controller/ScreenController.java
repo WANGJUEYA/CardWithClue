@@ -26,14 +26,13 @@ public class ScreenController {
         // 随机生成
         LongStream.range(0, end)
                 .forEach(i -> {
-                    String id = String.valueOf(i);
                     DataCard card = new DataCard();
-                    card.setId(id);
+                    card.setId(i);
                     result.getNodes().add(card);
 
                     DataClue clue = new DataClue();
-                    clue.setSource(id);
-                    clue.setTarget(String.valueOf(new Random().nextLong(end)));
+                    clue.setClueSource(i);
+                    clue.setClueTarget(new Random().nextLong(end));
                     result.getLinks().add(clue);
                 });
 

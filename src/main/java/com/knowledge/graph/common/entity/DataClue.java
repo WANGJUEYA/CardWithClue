@@ -1,5 +1,6 @@
 package com.knowledge.graph.common.entity;
 
+import com.knowledge.graph.common.constant.ClueGroupEnum;
 import lombok.Data;
 
 import java.io.Serial;
@@ -11,10 +12,18 @@ public class DataClue implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    String source;
+    Long id;
 
-    String target;
+    Long clueSource;
 
-    String text;
+    Long clueTarget;
+
+    ClueGroupEnum clueGroup;
+
+    String clueKey;
+
+    String clueLink;
+
+    String clueDesc;
 
 }
