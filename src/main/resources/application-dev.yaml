@@ -1,0 +1,9 @@
+spring:
+  neo4j:
+    uri: bolt://192.168.1.43:7687
+    authentication:
+      username: neo4j
+      password: neo4j-jue
+
+graph:
+  proj-path: D:/code/CardWithClue

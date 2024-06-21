@@ -1,5 +1,7 @@
 package com.knowledge.graph.common.entity;
 
+import com.knowledge.graph.store.entity.DataCard;
+import com.knowledge.graph.store.entity.DataClue;
 import lombok.Data;
 
 import java.io.Serial;

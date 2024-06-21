@@ -1,9 +1,12 @@
 package com.knowledge.graph.screen.controller;
 
-import com.knowledge.graph.common.entity.DataCard;
-import com.knowledge.graph.common.entity.DataClue;
 import com.knowledge.graph.common.entity.DataGraph;
 import com.knowledge.graph.common.entity.DataResponse;
+import com.knowledge.graph.store.entity.DataCard;
+import com.knowledge.graph.store.entity.DataClue;
+import com.knowledge.graph.store.service.IDataCardService;
+import com.knowledge.graph.store.service.IDataClueService;
+import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,8 +19,21 @@ import java.util.stream.LongStream;
 @RequestMapping("/screen")
 public class ScreenController {
 
+    @Resource
+    private IDataCardService dataCardService;
+    @Resource
+    private IDataClueService dataClueService;
+
     @GetMapping(value = "/datasets")
     public DataResponse<DataGraph> datasets() {
+        DataGraph result = new DataGraph();
+        result.setNodes(dataCardService.list());
+        result.setLinks(dataClueService.list());
+        return DataResponse.ok(result);
+    }
+
+    @GetMapping(value = "/random")
+    public DataResponse<DataGraph> random() {
         DataGraph result = new DataGraph();
         result.setNodes(new ArrayList<>());
         result.setLinks(new ArrayList<>());
@@ -31,8 +47,8 @@ public class ScreenController {
                     result.getNodes().add(card);
 
                     DataClue clue = new DataClue();
-                    clue.setClueSource(i);
-                    clue.setClueTarget(new Random().nextLong(end));
+                    clue.setSource(i);
+                    clue.setTarget(new Random().nextLong(end));
                     result.getLinks().add(clue);
                 });
 

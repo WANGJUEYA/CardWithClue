@@ -1,4 +1,4 @@
-package com.knowledge.graph.common.entity;
+package com.knowledge.graph.store.entity;
 
 import com.knowledge.graph.common.constant.CardGroupEnum;
 import lombok.Data;

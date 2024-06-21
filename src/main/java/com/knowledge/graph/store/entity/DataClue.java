@@ -1,4 +1,4 @@
-package com.knowledge.graph.common.entity;
+package com.knowledge.graph.store.entity;
 
 import com.knowledge.graph.common.constant.ClueGroupEnum;
 import lombok.Data;
@@ -14,9 +14,9 @@ public class DataClue implements Serializable {
 
     Long id;
 
-    Long clueSource;
+    Long source;
 
-    Long clueTarget;
+    Long target;
 
     ClueGroupEnum clueGroup;
 
