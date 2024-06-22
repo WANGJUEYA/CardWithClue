@@ -14,9 +14,9 @@ import java.util.stream.Stream;
 
 public interface IEntity<G> {
 
-    Long getId();
+    String getId();
 
-    void setId(Long id);
+    void setId(String id);
 
     G getGroup();
 
@@ -51,8 +51,12 @@ public interface IEntity<G> {
     void setUpdated(Boolean updated);
 
     default Stream<String> names() {
-        return Stream.concat(Stream.of(getKey()), Stream.of(StringUtils.defaultIfBlank(getAlias(), StringUtils.EMPTY).split(",")))
-                .filter(StringUtils::isNotBlank).distinct();
+        Stream<String> keyStream = Stream.of(getKey());
+        if (StringUtils.isBlank(getAlias())) {
+            return keyStream;
+        } else {
+            return Stream.concat(keyStream, Stream.of(getAlias().split(","))).filter(StringUtils::isNotBlank).distinct();
+        }
     }
 
     default <T extends IEntity<?>> boolean nameEquals(T item) {
@@ -67,7 +71,8 @@ public interface IEntity<G> {
         if (item == null) {
             return false;
         }
-        return Objects.equals(getGroup(), item.getGroup()) && nameEquals(item);
+        return (StringUtils.isNotBlank(getId()) && Objects.equals(getId(), item.getId()))
+                || (Objects.equals(getGroup(), item.getGroup()) && nameEquals(item));
     }
 
     default <T extends IEntity<?>> T find(List<T> exist) {

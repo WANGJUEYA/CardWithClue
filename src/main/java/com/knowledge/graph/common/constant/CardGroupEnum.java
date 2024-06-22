@@ -6,14 +6,18 @@ public enum CardGroupEnum {
     TIME("时间"),
     PLACE("地点"),
     EVENT("事件"),
+
     THING("事物"),
     THING_PERSON("事物-人物"),
     THING_BOOK("事物-书籍"),
     THING_MUSIC("事物-音乐"),
-    THING_MUSIC_ALBUM("事物-音乐专辑"),
     THING_MOVIE("事物-电影"),
     THING_DRAMA("事物-电视剧"),
     THING_GAME("事物-游戏"),
+
+    COLLECT("卡片集合"),
+    COLLECT_ALBUM("合集-音乐专辑"),
+
     UNKNOWN("未定义"),
     ;
 

@@ -1,5 +1,6 @@
 package com.knowledge.graph.store.service;
 
+import com.knowledge.graph.store.entity.DataGraph;
 import com.knowledge.graph.uitils.libs.AbstractCrawler;
 
 /**
@@ -7,6 +8,6 @@ import com.knowledge.graph.uitils.libs.AbstractCrawler;
  */
 public interface IDataGraphService {
 
-    void refreshCrawler(AbstractCrawler crawler);
+    DataGraph refreshCrawler(AbstractCrawler crawler);
 
 }

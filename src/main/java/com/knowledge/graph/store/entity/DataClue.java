@@ -1,6 +1,8 @@
 package com.knowledge.graph.store.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.knowledge.graph.common.constant.ClueGroupEnum;
 import com.knowledge.graph.common.entity.IEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -16,13 +18,33 @@ public class DataClue implements Serializable, IEntity<ClueGroupEnum> {
     @Serial
     private static final long serialVersionUID = 1L;
 
+    public DataClue() {
+
+    }
+
+    public DataClue(ClueGroupEnum clueGroup, String source, String target) {
+        this.clueGroup = clueGroup;
+        this.source = source;
+        this.target = target;
+    }
+
+    public DataClue(ClueGroupEnum clueGroup, String source, DataCard targetCard) {
+        this.clueGroup = clueGroup;
+        this.source = source;
+        this.targetCard = targetCard;
+    }
+
     @Schema(description = "线索id")
-    Long id;
+    @TableId(type = IdType.AUTO)
+    String id;
+
+    @Schema(description = "线索类型")
+    ClueGroupEnum clueGroup;
 
     @Schema(description = "线索源")
-    Long source;
+    String source;
 
-    public Long getSource() {
+    public String getSource() {
         if (source != null) {
             return source;
         } else if (sourceCard != null) {
@@ -36,9 +58,9 @@ public class DataClue implements Serializable, IEntity<ClueGroupEnum> {
     DataCard sourceCard;
 
     @Schema(description = "线索指向")
-    Long target;
+    String target;
 
-    public Long getTarget() {
+    public String getTarget() {
         if (target != null) {
             return target;
         } else if (targetCard != null) {
@@ -51,9 +73,6 @@ public class DataClue implements Serializable, IEntity<ClueGroupEnum> {
     @TableField(exist = false)
     DataCard targetCard;
 
-    @Schema(description = "线索类型")
-    ClueGroupEnum clueGroup;
-
     @Override
     public ClueGroupEnum getGroup() {
         return clueGroup;
@@ -64,7 +83,7 @@ public class DataClue implements Serializable, IEntity<ClueGroupEnum> {
         this.clueGroup = group;
     }
 
-    @Schema(description = "线索名称")
+    @Schema(description = "线索名称; 非必填，其他仓库的id")
     @TableField("CLUE_KEY")
     String key;
 

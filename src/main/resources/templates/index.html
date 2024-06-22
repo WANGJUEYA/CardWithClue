@@ -33,11 +33,18 @@
         })
     });
 
-    function init(gData) {
+    function init(queryData) {
+        const gData = {
+            nodes: queryData?.cards || [],
+            links: queryData?.clues || [],
+        }
+        const nodeMap = {};
+        gData.nodes.forEach(node => nodeMap[node.id] = node)
+
         // cross-link node objects
         gData.links.forEach(link => {
-            const a = gData.nodes[link.source];
-            const b = gData.nodes[link.target];
+            const a = nodeMap[link.source];
+            const b = nodeMap[link.target];
             !a.neighbors && (a.neighbors = []);
             !b.neighbors && (b.neighbors = []);
             a.neighbors.push(b);
@@ -88,8 +95,8 @@
                 highlightLinks.clear();
                 if (node) {
                     highlightNodes.add(node);
-                    node.neighbors.forEach(neighbor => highlightNodes.add(neighbor));
-                    node.links.forEach(link => highlightLinks.add(link));
+                    (node.neighbors||[]).forEach(neighbor => highlightNodes.add(neighbor));
+                    (node.links||[]).forEach(link => highlightLinks.add(link));
                 }
 
                 hoverNode = node || null;

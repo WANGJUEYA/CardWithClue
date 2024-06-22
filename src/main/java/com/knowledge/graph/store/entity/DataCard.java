@@ -1,6 +1,8 @@
 package com.knowledge.graph.store.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.knowledge.graph.common.constant.CardGroupEnum;
 import com.knowledge.graph.common.entity.IEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -16,8 +18,18 @@ public class DataCard implements Serializable, IEntity<CardGroupEnum> {
     @Serial
     private static final long serialVersionUID = 1L;
 
+    public DataCard() {
+
+    }
+
+    public DataCard(CardGroupEnum cardGroup, String key) {
+        this.cardGroup = cardGroup;
+        this.key = key;
+    }
+
     @Schema(description = "卡片id")
-    Long id;
+    @TableId(type = IdType.AUTO)
+    String id;
 
     @Schema(description = "卡片类型")
     CardGroupEnum cardGroup;
