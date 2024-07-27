@@ -1,14 +1,8 @@
 package com.knowledge.graph.uitils.libs.music163;
 
 import com.alibaba.fastjson2.JSON;
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.knowledge.graph.common.constant.CardGroupEnum;
 import com.knowledge.graph.common.constant.CardKeyEnum;
-import com.knowledge.graph.common.constant.ClueGroupEnum;
 import com.knowledge.graph.config.GraphConfig;
-import com.knowledge.graph.store.entity.DataCard;
-import com.knowledge.graph.store.entity.DataClue;
 import com.knowledge.graph.store.entity.DataGraph;
 import com.knowledge.graph.uitils.libs.AbstractCrawler;
 import com.knowledge.graph.uitils.libs.music163.entity.Artist;
@@ -29,18 +23,6 @@ public class CrawlerMusic163FavImpl extends AbstractCrawler {
 
     @Resource
     private GraphConfig graphConfig;
-
-    @Override
-    public Wrapper<DataCard> wrapperCard() {
-        return Wrappers.lambdaQuery(DataCard.class)
-                .eq(DataCard::getCardGroup, CardGroupEnum.THING_PERSON);
-    }
-
-    @Override
-    public Wrapper<DataClue> wrapperClue() {
-        return Wrappers.lambdaQuery(DataClue.class)
-                .eq(DataClue::getClueGroup, ClueGroupEnum.LIB_STORE_MUSIC_163);
-    }
 
     @Override
     public List<DataGraph> crawler() {

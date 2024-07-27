@@ -48,9 +48,9 @@ public class Artist {
     }
 
     public static List<Artist> graphFlat(DataGraph graph) {
-        Map<String, DataCard> cardMap = graph.getCards().stream().filter(c -> CardGroupEnum.THING_PERSON.equals(c.getCardGroup()))
+        Map<String, DataCard> cardMap = graph.getCards().stream().filter(c -> CardGroupEnum.THING_PERSON.equals(c.getDataGroup()))
                 .collect(Collectors.toMap(DataCard::getId, Function.identity()));
-        return graph.getClues().stream().filter(c -> LIB_STORE_MUSIC_163.equals(c.getClueGroup())).map(item -> {
+        return graph.getClues().stream().filter(c -> LIB_STORE_MUSIC_163.equals(c.getDataGroup())).map(item -> {
             DataCard artist = cardMap.get(item.getTarget());
             if (artist == null) {
                 return null;

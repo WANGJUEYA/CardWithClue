@@ -1,12 +1,5 @@
 package com.knowledge.graph.uitils.libs.jjwxc;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.knowledge.graph.common.constant.CardGroupEnum;
-import com.knowledge.graph.common.constant.CardKeyEnum;
-import com.knowledge.graph.common.constant.ClueGroupEnum;
-import com.knowledge.graph.store.entity.DataCard;
-import com.knowledge.graph.store.entity.DataClue;
 import com.knowledge.graph.store.entity.DataGraph;
 import com.knowledge.graph.uitils.CrawlerUtils;
 import com.knowledge.graph.uitils.libs.AbstractCrawler;
@@ -29,18 +22,6 @@ import static com.knowledge.graph.uitils.libs.jjwxc.LibsConstant.HEADER_VALUE;
 public class CrawlerJjwxcFavImpl extends AbstractCrawler {
 
     @Override
-    public Wrapper<DataCard> wrapperCard() {
-        return Wrappers.lambdaQuery(DataCard.class)
-                .eq(DataCard::getCardGroup, CardGroupEnum.THING_PERSON);
-    }
-
-    @Override
-    public Wrapper<DataClue> wrapperClue() {
-        return Wrappers.lambdaQuery(DataClue.class)
-                .eq(DataClue::getClueGroup, ClueGroupEnum.LIB_STORE_JJWXC);
-    }
-
-    @Override
     public List<DataGraph> crawler() {
         Document html = CrawlerUtils.getHtml("https://my.jjwxc.net/backend/favoriteauthor.php", HEADER_KEY, HEADER_VALUE);
         Element doc;
@@ -56,7 +37,7 @@ public class CrawlerJjwxcFavImpl extends AbstractCrawler {
             String authorId = authorHref.split("authorid=")[1];
             request.add(new Author(authorId, authorName));
         }
-        return request.stream().map(a -> a.graphItem(CardKeyEnum.JJWXC.card())).toList();
+        return request.stream().map(Author::graphItem).toList();
     }
 
 }

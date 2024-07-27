@@ -1,12 +1,5 @@
 package com.knowledge.graph.uitils.libs.jjwxc;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.knowledge.graph.common.constant.CardGroupEnum;
-import com.knowledge.graph.common.constant.CardKeyEnum;
-import com.knowledge.graph.common.constant.ClueGroupEnum;
-import com.knowledge.graph.store.entity.DataCard;
-import com.knowledge.graph.store.entity.DataClue;
 import com.knowledge.graph.store.entity.DataGraph;
 import com.knowledge.graph.uitils.CrawlerUtils;
 import com.knowledge.graph.uitils.libs.AbstractCrawler;
@@ -32,18 +25,6 @@ public class CrawlerJjwxcNovelImpl extends AbstractCrawler {
 
     public CrawlerJjwxcNovelImpl(Author author) {
         this.author = author;
-    }
-
-    @Override
-    public Wrapper<DataCard> wrapperCard() {
-        return Wrappers.lambdaQuery(DataCard.class)
-                .in(DataCard::getCardGroup, CardGroupEnum.THING_BOOK, CardGroupEnum.THING_PERSON);
-    }
-
-    @Override
-    public Wrapper<DataClue> wrapperClue() {
-        return Wrappers.lambdaQuery(DataClue.class)
-                .in(DataClue::getClueGroup, ClueGroupEnum.LIB_STORE_JJWXC, ClueGroupEnum.WRITER);
     }
 
     @Override
@@ -76,7 +57,7 @@ public class CrawlerJjwxcNovelImpl extends AbstractCrawler {
                 log.error("数据获取失败 >>> title:{}, novelHref:{}", title.text(), novelHref);
             }
         }
-        return request.stream().map(a -> a.graphItem(CardKeyEnum.JJWXC.card(), author.getAuthor())).toList();
+        return request.stream().map(a -> a.graphItem(author.getAuthor())).toList();
     }
 
 }

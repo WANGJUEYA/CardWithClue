@@ -7,13 +7,14 @@ import com.knowledge.graph.common.constant.ClueGroupEnum;
 import com.knowledge.graph.common.entity.IEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serial;
 import java.io.Serializable;
 
 @Schema(description = "线索")
 @Data
-public class DataClue implements Serializable, IEntity<ClueGroupEnum> {
+public class DataClue implements Serializable, IEntity {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -22,24 +23,32 @@ public class DataClue implements Serializable, IEntity<ClueGroupEnum> {
 
     }
 
-    public DataClue(ClueGroupEnum clueGroup, String source, String target) {
-        this.clueGroup = clueGroup;
+    public DataClue(ClueGroupEnum dataGroup, String source, String target) {
+        this.dataGroup = dataGroup;
         this.source = source;
         this.target = target;
     }
 
-    public DataClue(ClueGroupEnum clueGroup, String source, DataCard targetCard) {
-        this.clueGroup = clueGroup;
+    public DataClue(ClueGroupEnum dataGroup, String source, DataCard targetCard) {
+        this.dataGroup = dataGroup;
         this.source = source;
         this.targetCard = targetCard;
     }
 
     @Schema(description = "线索id")
-    @TableId(type = IdType.AUTO)
+    @TableId(type = IdType.INPUT)
     String id;
 
+    public String getId() {
+        if (StringUtils.isBlank(id) && getDataGroup() != null && StringUtils.isNotBlank(getSource()) && StringUtils.isNotBlank(getTarget())) {
+            id = getDataGroup().name() + "-" + getSource() + "-" + getTarget();
+        }
+        return id;
+    }
+
     @Schema(description = "线索类型")
-    ClueGroupEnum clueGroup;
+    @TableField("CLUE_GROUP")
+    ClueGroupEnum dataGroup;
 
     @Schema(description = "线索源")
     String source;
@@ -72,16 +81,6 @@ public class DataClue implements Serializable, IEntity<ClueGroupEnum> {
     @Schema(description = "目标卡片实体")
     @TableField(exist = false)
     DataCard targetCard;
-
-    @Override
-    public ClueGroupEnum getGroup() {
-        return clueGroup;
-    }
-
-    @Override
-    public void setGroup(ClueGroupEnum group) {
-        this.clueGroup = group;
-    }
 
     @Schema(description = "线索名称; 非必填，其他仓库的id")
     @TableField("CLUE_KEY")

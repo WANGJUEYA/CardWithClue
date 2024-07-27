@@ -1,16 +1,15 @@
 package com.knowledge.graph.uitils.libs.jjwxc.entity;
 
 import com.knowledge.graph.common.constant.CardGroupEnum;
+import com.knowledge.graph.common.constant.CardKeyEnum;
 import com.knowledge.graph.store.entity.DataCard;
 import com.knowledge.graph.store.entity.DataClue;
 import com.knowledge.graph.store.entity.DataGraph;
+import com.knowledge.graph.uitils.CrawlerUtils;
 import lombok.Data;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import java.util.Set;
 
 import static com.knowledge.graph.common.constant.ClueGroupEnum.LIB_STORE_JJWXC;
 
@@ -18,9 +17,13 @@ import static com.knowledge.graph.common.constant.ClueGroupEnum.LIB_STORE_JJWXC;
 public class Author {
 
     public static final String LINK_PREFIX = "https://www.jjwxc.net/oneauthor.php?authorid=";
+    public static final DataCard LIB = CardKeyEnum.JJWXC.card();
 
     String id;
 
+    /**
+     * 作者名字
+     */
     String name;
 
     public Author(String id, String name) {
@@ -38,32 +41,31 @@ public class Author {
 
     public DataCard author() {
         if (author == null) {
-            author = new DataCard(CardGroupEnum.THING_PERSON, name);
+            author = CrawlerUtils.mergeDataCard(new DataCard(CardGroupEnum.THING_PERSON, name));
         }
         return author;
     }
 
-    public DataClue authorStore(DataCard lib) {
-        DataClue store = new DataClue(LIB_STORE_JJWXC, lib.getId(), author());
+    public DataClue authorStore() {
+        DataClue store = new DataClue(LIB_STORE_JJWXC, LIB.getId(), author());
         store.setKey(id);
         store.setLink(LINK_PREFIX + id);
         return store;
     }
 
-    public DataGraph graphItem(DataCard lib) {
-        return new DataGraph(List.of(lib, author()), List.of(authorStore(lib)));
+    public DataGraph graphItem() {
+        return new DataGraph(List.of(CardKeyEnum.JJWXC.card(), author()), List.of(authorStore()));
     }
 
-    public static List<Author> graphFlat(DataGraph graph) {
-        Map<String, DataCard> cardMap = graph.getCards().stream().filter(c -> CardGroupEnum.THING_PERSON.equals(c.getCardGroup()))
-                .collect(Collectors.toMap(DataCard::getId, Function.identity()));
-        return graph.getClues().stream().filter(c -> LIB_STORE_JJWXC.equals(c.getClueGroup())).map(item -> {
-            DataCard author = cardMap.get(item.getTarget());
-            if (author == null) {
-                return null;
-            } else {
-                return new Author(item.getKey(), author.getKey(), author);
-            }
-        }).filter(Objects::nonNull).collect(Collectors.toList());
+    public static List<Author> graphFlat(List<DataClue> authorStoreList) {
+        return authorStoreList.stream().map(authorStore -> {
+            DataCard authorCard = CrawlerUtils.getDataCardId(authorStore.getTarget());
+            return new Author(authorStore.getKey(), authorCard.getKey(), authorCard);
+        }).toList();
     }
+
+    public static List<Author> graphFlat(Set<String> authorIds) {
+        return graphFlat(CrawlerUtils.CLUE_MAP_ID.values().stream().filter(d -> authorIds.contains(d.getKey())).toList());
+    }
+
 }

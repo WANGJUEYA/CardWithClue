@@ -1,12 +1,7 @@
 package com.knowledge.graph.uitils.libs.music163;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.knowledge.graph.common.constant.CardGroupEnum;
-import com.knowledge.graph.common.constant.ClueGroupEnum;
-import com.knowledge.graph.store.entity.DataGraph;
 import com.knowledge.graph.store.entity.DataCard;
-import com.knowledge.graph.store.entity.DataClue;
+import com.knowledge.graph.store.entity.DataGraph;
 import com.knowledge.graph.uitils.libs.AbstractCrawler;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
@@ -27,18 +22,6 @@ public class CrawlerMusic163AlbumImpl extends AbstractCrawler {
 
     public CrawlerMusic163AlbumImpl(DataCard singer) {
         this.singer = singer;
-    }
-
-    @Override
-    public Wrapper<DataCard> wrapperCard() {
-        return Wrappers.lambdaQuery(DataCard.class).eq(DataCard::getCardGroup, CardGroupEnum.COLLECT_ALBUM);
-    }
-
-    @Override
-    public Wrapper<DataClue> wrapperClue() {
-        return Wrappers.lambdaQuery(DataClue.class)
-                .eq(DataClue::getClueGroup, ClueGroupEnum.LIB_STORE_MUSIC_163)
-                .or().and(j -> j.eq(DataClue::getSource, singer.getId()).eq(DataClue::getClueGroup, ClueGroupEnum.PUBIC_ALBUM));
     }
 
     @Override
