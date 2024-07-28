@@ -1,21 +1,24 @@
 package com.knowledge.graph.uitils.libs.music163.entity;
 
-import com.knowledge.graph.common.constant.CardGroupEnum;
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONObject;
 import com.knowledge.graph.store.entity.DataCard;
 import com.knowledge.graph.store.entity.DataClue;
 import com.knowledge.graph.store.entity.DataGraph;
 import com.knowledge.graph.uitils.CrawlerUtils;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.Assert;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
+import static com.knowledge.graph.common.constant.CardGroupEnum.THING_PERSON;
 import static com.knowledge.graph.common.constant.CardKeyEnum.MUSIC_163;
 import static com.knowledge.graph.common.constant.ClueGroupEnum.LIB_STORE_MUSIC_163;
 import static com.knowledge.graph.uitils.libs.music163.LibsConstant.REQUEST_ARTIST_PRE;
 
+@Slf4j
 @Data
 public class Artist {
 
@@ -28,10 +31,15 @@ public class Artist {
 
     Set<String> alias;
 
+    String time;
+
+    int albumSize;
+
     public Artist() {
     }
 
     public Artist(String id, DataCard dataCard) {
+        Assert.notNull(dataCard, "必须有对应卡片配置");
         this.id = id;
         this.name = dataCard.getKey();
         if (StringUtils.isNotBlank(dataCard.getAlias())) {
@@ -39,15 +47,24 @@ public class Artist {
         } else {
             alias = new HashSet<>();
         }
+        time = dataCard.getTime();
         this.dataCard = dataCard;
+        try {
+            JSONObject info = JSONObject.parse(dataCard.getJson());
+            this.albumSize = info.getIntValue("albums");
+        } catch (Exception e) {
+            log.error("获取额外信息失败 >>>> {}", e.getMessage());
+        }
     }
 
     DataCard dataCard;
 
     public DataCard createCard() {
         if (dataCard == null) {
-            DataCard newData = new DataCard(CardGroupEnum.THING_PERSON, name);
+            DataCard newData = new DataCard(THING_PERSON, name);
             newData.setAlias(alias);
+            newData.setTime(time);
+            newData.setJson(JSON.toJSONString(Map.of("albums", albumSize)));
             dataCard = CrawlerUtils.mergeDataCard(newData);
         }
         return dataCard;
@@ -64,17 +81,20 @@ public class Artist {
         return new DataGraph(List.of(MUSIC_163.card(), createCard()), List.of(createClue()));
     }
 
-    public static List<Artist> graphFlat(List<DataClue> storeList) {
-        return storeList.stream().map(store -> {
+    public static List<Artist> graphFlat(List<DataClue> storeList, boolean refreshAll) {
+        return storeList.stream().filter(e -> LIB_STORE_MUSIC_163.equals(e.getDataGroup())).map(store -> {
             DataCard card = CrawlerUtils.getDataCardId(store.getTarget());
+            if (card == null || !THING_PERSON.equals(card.getDataGroup()) || !(refreshAll || Boolean.TRUE.equals(card.getUpdated()))) {
+                return null;
+            }
             return new Artist(store.getKey(), card);
-        }).toList();
+        }).filter(Objects::nonNull).toList();
     }
 
     public static List<Artist> graphFlat(Set<String> storeIds) {
         return graphFlat(CrawlerUtils.CLUE_MAP_ID.values().stream()
                 .filter(d -> StringUtils.isNotBlank(d.getKey()))
-                .filter(d -> storeIds.contains(d.getKey())).toList());
+                .filter(d -> storeIds.contains(d.getKey())).toList(), true);
     }
 
 }

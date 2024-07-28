@@ -35,7 +35,13 @@ public class CrawlerJjwxcFavImpl extends AbstractCrawler {
             String authorName = item.text().trim();
             String authorHref = item.child(0).attributes().get("href");
             String authorId = authorHref.split("authorid=")[1];
-            request.add(new Author(authorId, authorName));
+            int books = 0;
+            try {
+                books = Integer.parseInt(child.children().get(2).text().trim());
+            } catch (Exception e) {
+                log.error("文章数量获取失败 >>>> {}", e.getMessage());
+            }
+            request.add(new Author(authorId, authorName, books));
         }
         return request.stream().sorted(Comparator.comparingLong(e -> Long.parseLong(e.getId()))).map(Author::graphItem).toList();
     }

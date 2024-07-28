@@ -1,5 +1,6 @@
 package com.knowledge.graph.store.controller;
 
+import com.knowledge.graph.common.constant.RefreshEnum;
 import com.knowledge.graph.store.entity.DataGraph;
 import com.knowledge.graph.store.service.IDataCardService;
 import com.knowledge.graph.store.service.IDataClueService;
@@ -14,10 +15,7 @@ import com.knowledge.graph.uitils.libs.music163.CrawlerMusic163SongImpl;
 import com.knowledge.graph.uitils.libs.music163.entity.Album;
 import com.knowledge.graph.uitils.libs.music163.entity.Artist;
 import jakarta.annotation.Resource;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Set;
@@ -38,11 +36,14 @@ public class DataGraphController {
     private CrawlerJjwxcFavImpl crawlerJjwxcFav;
 
     @GetMapping(value = "/refreshMusic163Fav")
-    public void refreshMusic163Fav() {
+    public void refreshMusic163Fav(@RequestParam(value = "refresh", defaultValue = "UPDATE") RefreshEnum refresh) {
         CrawlerUtils.loadData(dataCardService.list(), dataClueService.list());
         DataGraph graph = dataGraphService.refreshCrawler(crawlerMusic163Fav);
-        crawlerMusic163(Artist.graphFlat(graph.getClues()));
-        CrawlerUtils.loadData(dataCardService.list(), dataClueService.list());
+        // 刷新歌手全量数据
+        if (!RefreshEnum.NONE.equals(refresh)) {
+            crawlerMusic163(Artist.graphFlat(graph.getClues(), RefreshEnum.ALL.equals(refresh)));
+        }
+        CrawlerUtils.clearData();
     }
 
     @GetMapping(value = "/refreshMusic163FavArtist/{id}")
@@ -65,11 +66,13 @@ public class DataGraphController {
     }
 
     @GetMapping(value = "/refreshJjwxcFav")
-    public void refreshJjwxcFav() {
+    public void refreshJjwxcFav(@RequestParam(value = "refresh", defaultValue = "UPDATE") RefreshEnum refresh) {
         CrawlerUtils.loadData(dataCardService.list(), dataClueService.list());
         DataGraph graph = dataGraphService.refreshCrawler(crawlerJjwxcFav);
         // 刷新小说
-        Author.graphFlat(graph.getClues()).forEach(a -> dataGraphService.refreshCrawler(new CrawlerJjwxcNovelImpl(a)));
+        if (!RefreshEnum.NONE.equals(refresh)) {
+            Author.graphFlat(graph.getClues(), RefreshEnum.ALL.equals(refresh)).forEach(a -> dataGraphService.refreshCrawler(new CrawlerJjwxcNovelImpl(a)));
+        }
         CrawlerUtils.clearData();
     }
 

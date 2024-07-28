@@ -83,6 +83,7 @@ public interface IEntity {
             update = true;
             setJson(newJson);
         }
+        update = updateInfo(newData, IEntity::getKey, IEntity::setKey) || update;
         update = updateInfo(newData, IEntity::getTime, IEntity::setTime) || update;
         update = updateInfo(newData, IEntity::getAlias, IEntity::setAlias) || update;
         update = updateInfo(newData, IEntity::getLink, IEntity::setLink) || update;

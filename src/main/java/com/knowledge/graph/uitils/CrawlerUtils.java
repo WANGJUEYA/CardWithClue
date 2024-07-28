@@ -10,7 +10,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
-import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
@@ -35,12 +34,14 @@ public class CrawlerUtils {
         for (DataClue dataClue : dataClueList) {
             CLUE_MAP_ID.put(dataClue.getId(), dataClue);
         }
+        log.info("数据加载完成 >>>>>>>>>>>>>>>>>>>>>>>> 同步远端仓库源开始");
     }
 
     public static void clearData() {
         CARD_MAP_ID.clear();
         CARD_MAP_KEY.clear();
         CLUE_MAP_ID.clear();
+        log.info("数据清理完成 >>>>>>>>>>>>>>>>>>>>>>>> 同步远端仓库源结束");
     }
 
     public static DataCard getDataCardId(String id) {
@@ -55,14 +56,14 @@ public class CrawlerUtils {
         if (CARD_MAP_KEY.containsKey(mapKey)) {
             return CARD_MAP_KEY.get(mapKey);
         } else {
-            String[] key = mapKey.split("-");
+            String[] key = mapKey.split("@-@");
             CardGroupEnum group = CardGroupEnum.valueOf(key[0]);
             if (key.length == 2) {
                 return getDataCard(group, key[1]);
             } else if (key.length == 3) {
                 return getDataCard(group, key[1], key[2]);
             }
-            throw new RuntimeException("mayKey不符合要求");
+            throw new RuntimeException("mayKey不符合要求 >>> " + mapKey);
         }
     }
 
@@ -124,8 +125,10 @@ public class CrawlerUtils {
 
     public static Document getHtml(String url, String headerKey, String headerValue) {
         try {
+            log.info("开始抓取数据 >>>> {}", url);
             return Jsoup.connect(url).header(headerKey, headerValue).execute().parse();
-        } catch (IOException e) {
+        } catch (Exception e) {
+            log.error("抓取数据失败 >>>> ", e);
             return null;
         }
     }

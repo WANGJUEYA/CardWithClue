@@ -40,9 +40,9 @@ public class DataCard implements Serializable, IEntity {
 
     public String getMapKey() {
         if (getDataGroup() != null && StringUtils.isNotBlank(getKey())) {
-            String mapKey = getDataGroup() + "-" + getKey();
+            String mapKey = getDataGroup() + "@-@" + getKey();
             if (StringUtils.isNotBlank(getAnnotation())) {
-                mapKey += "-" + getAnnotation();
+                mapKey += "@-@" + getAnnotation();
             }
             return mapKey;
         }

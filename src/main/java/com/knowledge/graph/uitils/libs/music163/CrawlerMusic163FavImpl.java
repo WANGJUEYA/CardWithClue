@@ -1,6 +1,7 @@
 package com.knowledge.graph.uitils.libs.music163;
 
 import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONObject;
 import com.knowledge.graph.config.GraphConfig;
 import com.knowledge.graph.store.entity.DataGraph;
 import com.knowledge.graph.uitils.libs.AbstractCrawler;
@@ -39,6 +40,14 @@ public class CrawlerMusic163FavImpl extends AbstractCrawler {
             return new ArrayList<>();
         }
         List<Artist> local = JSON.parseArray(json, Artist.class);
+        try {
+            JSONObject years = JSONObject.parse(CharStreams.fromFileName(graphConfig.getProjPath() + "/db/music163artistYear.json").toString());
+            if (years != null && !years.isEmpty()) {
+                local.forEach(e -> e.setTime(years.getString(e.getName())));
+            }
+        } catch (Exception e) {
+            log.error("获取歌手出生/成立时间失败 >>>> {}", e.getMessage());
+        }
         return Optional.ofNullable(local).orElse(new ArrayList<>()).stream()
                 .sorted(Comparator.comparingLong(e -> Long.parseLong(e.getId())))
                 .map(Artist::graphItem).toList();
