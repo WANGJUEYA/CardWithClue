@@ -7,6 +7,7 @@ import com.knowledge.graph.store.entity.DataClue;
 import com.knowledge.graph.store.entity.DataGraph;
 import com.knowledge.graph.uitils.CrawlerUtils;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 import java.util.Set;
@@ -65,7 +66,9 @@ public class Author {
     }
 
     public static List<Author> graphFlat(Set<String> authorIds) {
-        return graphFlat(CrawlerUtils.CLUE_MAP_ID.values().stream().filter(d -> authorIds.contains(d.getKey())).toList());
+        return graphFlat(CrawlerUtils.CLUE_MAP_ID.values().stream()
+                .filter(d -> StringUtils.isNotBlank(d.getKey()))
+                .filter(d -> authorIds.contains(d.getKey())).toList());
     }
 
 }

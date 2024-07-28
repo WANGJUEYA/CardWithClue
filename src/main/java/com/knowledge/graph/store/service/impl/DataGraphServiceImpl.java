@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -54,7 +53,9 @@ public class DataGraphServiceImpl implements IDataGraphService {
                     dataCardService.updateBatchById(update);
                 }
             }
-            Collection<DataClue> updateClue = graph.getClues().stream().collect(Collectors.toMap(DataClue::getId, Function.identity(), CrawlerUtils::mergeDataClue)).values();
+            Collection<DataClue> updateClue = graph.getClues().stream()
+                    .collect(Collectors.toMap(DataClue::getId, CrawlerUtils::mergeDataClue, CrawlerUtils::mergeDataClue))
+                    .values().stream().filter(e -> Boolean.TRUE.equals(e.getUpdated())).toList();
             if (!updateClue.isEmpty()) {
                 log.debug("处理线索数据 >>>> {}", updateClue.size());
                 dataClueService.saveOrUpdateBatch(updateClue);
