@@ -4,64 +4,77 @@ import com.knowledge.graph.common.constant.CardGroupEnum;
 import com.knowledge.graph.store.entity.DataCard;
 import com.knowledge.graph.store.entity.DataClue;
 import com.knowledge.graph.store.entity.DataGraph;
+import com.knowledge.graph.uitils.CrawlerUtils;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
+import static com.knowledge.graph.common.constant.CardKeyEnum.MUSIC_163;
 import static com.knowledge.graph.common.constant.ClueGroupEnum.LIB_STORE_MUSIC_163;
+import static com.knowledge.graph.uitils.libs.music163.LibsConstant.REQUEST_ARTIST_PRE;
 
 @Data
 public class Artist {
 
-    public static final String LINK_PREFIX = "https://music.163.com/#/artist?id=";
-
     String id;
 
+    /**
+     * 歌手名字
+     */
     String name;
 
     Set<String> alias;
 
-    DataCard artist;
-
-    public DataCard artist() {
-        if (artist == null) {
-            artist = new DataCard(CardGroupEnum.THING_PERSON, name);
-            artist.setAlias(alias);
-        }
-        return artist;
+    public Artist() {
     }
 
-    public DataClue artistStore(DataCard lib) {
-        DataClue store = new DataClue(LIB_STORE_MUSIC_163, lib.getId(), artist());
+    public Artist(String id, DataCard dataCard) {
+        this.id = id;
+        this.name = dataCard.getKey();
+        if (StringUtils.isNotBlank(dataCard.getAlias())) {
+            alias = Set.of(dataCard.getAlias().split(","));
+        } else {
+            alias = new HashSet<>();
+        }
+        this.dataCard = dataCard;
+    }
+
+    DataCard dataCard;
+
+    public DataCard createCard() {
+        if (dataCard == null) {
+            DataCard newData = new DataCard(CardGroupEnum.THING_PERSON, name);
+            newData.setAlias(alias);
+            dataCard = CrawlerUtils.mergeDataCard(newData);
+        }
+        return dataCard;
+    }
+
+    public DataClue createClue() {
+        DataClue store = new DataClue(LIB_STORE_MUSIC_163, MUSIC_163.card().getId(), createCard());
         store.setKey(id);
-        store.setLink(LINK_PREFIX + id);
+        store.setLink(REQUEST_ARTIST_PRE + id);
         return store;
     }
 
-    public DataGraph graphItem(DataCard lib) {
-        return new DataGraph(List.of(lib, artist()), List.of(artistStore(lib)));
+    public DataGraph graphItem() {
+        return new DataGraph(List.of(MUSIC_163.card(), createCard()), List.of(createClue()));
     }
 
-    public static List<Artist> graphFlat(DataGraph graph) {
-        Map<String, DataCard> cardMap = graph.getCards().stream().filter(c -> CardGroupEnum.THING_PERSON.equals(c.getDataGroup()))
-                .collect(Collectors.toMap(DataCard::getId, Function.identity()));
-        return graph.getClues().stream().filter(c -> LIB_STORE_MUSIC_163.equals(c.getDataGroup())).map(item -> {
-            DataCard artist = cardMap.get(item.getTarget());
-            if (artist == null) {
-                return null;
-            } else {
-                Artist i = new Artist();
-                i.setId(item.getKey());
-                i.setName(artist.getKey());
-                i.setArtist(artist);
-                return i;
-            }
-        }).filter(Objects::nonNull).collect(Collectors.toList());
+    public static List<Artist> graphFlat(List<DataClue> storeList) {
+        return storeList.stream().map(store -> {
+            DataCard card = CrawlerUtils.getDataCardId(store.getTarget());
+            return new Artist(store.getKey(), card);
+        }).toList();
+    }
+
+    public static List<Artist> graphFlat(Set<String> storeIds) {
+        return graphFlat(CrawlerUtils.CLUE_MAP_ID.values().stream()
+                .filter(d -> StringUtils.isNotBlank(d.getKey()))
+                .filter(d -> storeIds.contains(d.getKey())).toList());
     }
 
 }

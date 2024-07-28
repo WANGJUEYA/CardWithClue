@@ -16,6 +16,10 @@ public interface IEntity {
 
     void setKey(String key);
 
+    String getTime();
+
+    void setTime(String time);
+
     String getAlias();
 
     void setAlias(String alias);
@@ -79,6 +83,7 @@ public interface IEntity {
             update = true;
             setJson(newJson);
         }
+        update = updateInfo(newData, IEntity::getTime, IEntity::setTime) || update;
         update = updateInfo(newData, IEntity::getAlias, IEntity::setAlias) || update;
         update = updateInfo(newData, IEntity::getLink, IEntity::setLink) || update;
         update = updateInfo(newData, IEntity::getDesc, IEntity::setDesc) || update;

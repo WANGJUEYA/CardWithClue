@@ -8,4 +8,8 @@ public interface LibsConstant {
 
     String REQUEST_FAV_AUTHOR = "https://my.jjwxc.net/backend/favoriteauthor.php";
 
+    String REQUEST_AUTHOR_PRE = "https://www.jjwxc.net/oneauthor.php?authorid=";
+
+    String REQUEST_NOVEL_PRE = "https://www.jjwxc.net/onebook.php?novelid=";
+
 }

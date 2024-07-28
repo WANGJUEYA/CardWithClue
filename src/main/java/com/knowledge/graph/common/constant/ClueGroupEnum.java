@@ -16,6 +16,8 @@ public enum ClueGroupEnum {
     COMPOSER("作曲"),
     SINGER("演唱"),
     PUBIC_ALBUM("发布专辑"),
+    COLLECT("卡片集合"),
+    COLLECT_ALBUM("合集-音乐专辑"),
     ;
 
     ClueGroupEnum(String desc) {

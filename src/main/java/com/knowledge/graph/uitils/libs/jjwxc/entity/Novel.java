@@ -1,7 +1,6 @@
 package com.knowledge.graph.uitils.libs.jjwxc.entity;
 
 import com.knowledge.graph.common.constant.CardGroupEnum;
-import com.knowledge.graph.common.constant.CardKeyEnum;
 import com.knowledge.graph.store.entity.DataCard;
 import com.knowledge.graph.store.entity.DataClue;
 import com.knowledge.graph.store.entity.DataGraph;
@@ -10,14 +9,13 @@ import lombok.Data;
 
 import java.util.List;
 
+import static com.knowledge.graph.common.constant.CardKeyEnum.JJWXC;
 import static com.knowledge.graph.common.constant.ClueGroupEnum.LIB_STORE_JJWXC;
 import static com.knowledge.graph.common.constant.ClueGroupEnum.WRITER;
+import static com.knowledge.graph.uitils.libs.jjwxc.LibsConstant.REQUEST_NOVEL_PRE;
 
 @Data
 public class Novel {
-
-    public static final String LINK_PREFIX = "https://www.jjwxc.net/onebook.php?novelid=";
-    public static final DataCard LIB = CardKeyEnum.JJWXC.card();
 
     String id;
 
@@ -31,25 +29,25 @@ public class Novel {
         this.name = name;
     }
 
-    DataCard novel;
+    DataCard dataCard;
 
-    public DataCard novel() {
-        if (novel == null) {
-            novel = CrawlerUtils.mergeDataCard(new DataCard(CardGroupEnum.THING_BOOK, name));
+    public DataCard createCard() {
+        if (dataCard == null) {
+            dataCard = CrawlerUtils.mergeDataCard(new DataCard(CardGroupEnum.THING_BOOK, name));
         }
-        return novel;
+        return dataCard;
     }
 
-    public List<DataClue> novelStore(DataCard author) {
-        DataClue store = new DataClue(LIB_STORE_JJWXC, LIB.getId(), novel());
+    public List<DataClue> createClue(DataCard author) {
+        DataClue store = new DataClue(LIB_STORE_JJWXC, JJWXC.card().getId(), createCard());
         store.setKey(id);
-        store.setLink(LINK_PREFIX + id);
-        DataClue write = new DataClue(WRITER, author.getId(), novel());
+        store.setLink(REQUEST_NOVEL_PRE + id);
+        DataClue write = new DataClue(WRITER, author.getId(), createCard());
         return List.of(store, write);
     }
 
     public DataGraph graphItem(DataCard author) {
-        return new DataGraph(List.of(LIB, author, novel()), novelStore(author));
+        return new DataGraph(List.of(JJWXC.card(), author, createCard()), createClue(author));
     }
 
 }

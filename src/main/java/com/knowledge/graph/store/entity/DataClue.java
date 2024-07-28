@@ -86,6 +86,10 @@ public class DataClue implements Serializable, IEntity {
     @TableField("CLUE_KEY")
     String key;
 
+    @Schema(description = "时间")
+    @TableField("CLUE_TIME")
+    String time;
+
     @Schema(description = "别名")
     @TableField("CLUE_ALIAS")
     String alias;

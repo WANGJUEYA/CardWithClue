@@ -11,10 +11,10 @@ import org.jsoup.nodes.Element;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
-import static com.knowledge.graph.uitils.libs.jjwxc.LibsConstant.HEADER_KEY;
-import static com.knowledge.graph.uitils.libs.jjwxc.LibsConstant.HEADER_VALUE;
+import static com.knowledge.graph.uitils.libs.jjwxc.LibsConstant.*;
 
 @Slf4j
 @Schema(description = "关注作者")
@@ -23,7 +23,7 @@ public class CrawlerJjwxcFavImpl extends AbstractCrawler {
 
     @Override
     public List<DataGraph> crawler() {
-        Document html = CrawlerUtils.getHtml("https://my.jjwxc.net/backend/favoriteauthor.php", HEADER_KEY, HEADER_VALUE);
+        Document html = CrawlerUtils.getHtml(REQUEST_FAV_AUTHOR, HEADER_KEY, HEADER_VALUE);
         Element doc;
         if (html == null || (doc = html.getElementById("fav_author_table")) == null) {
             return new ArrayList<>();
@@ -37,7 +37,7 @@ public class CrawlerJjwxcFavImpl extends AbstractCrawler {
             String authorId = authorHref.split("authorid=")[1];
             request.add(new Author(authorId, authorName));
         }
-        return request.stream().map(Author::graphItem).toList();
+        return request.stream().sorted(Comparator.comparingLong(e -> Long.parseLong(e.getId()))).map(Author::graphItem).toList();
     }
 
 }

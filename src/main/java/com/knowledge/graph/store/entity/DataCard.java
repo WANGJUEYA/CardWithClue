@@ -61,6 +61,10 @@ public class DataCard implements Serializable, IEntity {
     @TableField("CARD_ANNOTATION")
     String annotation;
 
+    @Schema(description = "时间")
+    @TableField("CARD_TIME")
+    String time;
+
     @Schema(description = "别名")
     @TableField("CARD_ALIAS")
     String alias;
