@@ -74,6 +74,10 @@ public interface IEntity {
         }
     }
 
+    default boolean otherUpdateInfo(IEntity newData) {
+        return false;
+    }
+
     default void mergeFrom(@NotNull IEntity newData) {
         boolean update = Boolean.TRUE.equals(this.getUpdated());
         // 合并附加信息
@@ -88,6 +92,7 @@ public interface IEntity {
         update = updateInfo(newData, IEntity::getAlias, IEntity::setAlias) || update;
         update = updateInfo(newData, IEntity::getLink, IEntity::setLink) || update;
         update = updateInfo(newData, IEntity::getDesc, IEntity::setDesc) || update;
+        update = otherUpdateInfo(newData) || update;
         setUpdated(update);
     }
 

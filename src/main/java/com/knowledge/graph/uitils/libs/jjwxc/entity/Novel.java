@@ -20,12 +20,18 @@ public class Novel {
     String id;
 
     /**
+     * 作者名字
+     */
+    String author;
+
+    /**
      * 作品名称
      */
     String name;
 
-    public Novel(String id, String name) {
+    public Novel(String id, String author, String name) {
         this.id = id;
+        this.author = author;
         this.name = name;
     }
 
@@ -33,7 +39,7 @@ public class Novel {
 
     public DataCard createCard() {
         if (dataCard == null) {
-            dataCard = CrawlerUtils.mergeDataCard(new DataCard(CardGroupEnum.THING_BOOK, name));
+            dataCard = CrawlerUtils.mergeDataCard(new DataCard(CardGroupEnum.THING_BOOK, name, author));
         }
         return dataCard;
     }

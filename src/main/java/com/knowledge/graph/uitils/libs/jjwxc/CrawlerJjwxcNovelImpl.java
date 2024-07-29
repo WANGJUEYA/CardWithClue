@@ -48,13 +48,15 @@ public class CrawlerJjwxcNovelImpl extends AbstractCrawler {
                 continue;
             }
             try {
-                // 列出作者名称
+                // 列出小说名称
                 String novelName = title.get(0).text().trim();
                 if (novelName.endsWith(" [锁]")) {
                     continue;
                 }
                 String novelId = novelHref.split("novelid=")[1];
-                request.add(new Novel(novelId, novelName));
+
+                // 同名的小说存在可能性: 番外集, 带上作者名字
+                request.add(new Novel(novelId, author.getName(), novelName));
             } catch (Exception e) {
                 log.error("数据获取失败 >>> title:{}, novelHref:{}", title.text(), novelHref);
             }

@@ -46,7 +46,9 @@ public class CrawlerMusic163AlbumImpl extends AbstractCrawler {
                 String name = album.text();
                 String href = album.get(0).attributes().get("href");
                 String albumId = href.split("id=")[1];
-                albums.add(new Album(albumId, name, date));
+
+                // 同名的专辑存在可能性: 带上艺术家名字
+                albums.add(new Album(albumId, artist.getName(), name, date));
             } catch (Exception e) {
                 log.error("数据获取失败");
             }

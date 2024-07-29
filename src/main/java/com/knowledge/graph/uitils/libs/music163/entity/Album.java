@@ -19,6 +19,8 @@ public class Album {
 
     String id;
 
+    String artist;
+
     /**
      * 专辑名称
      */
@@ -26,8 +28,9 @@ public class Album {
 
     String time;
 
-    public Album(String id, String name, String time) {
+    public Album(String id, String artist, String name, String time) {
         this.id = id;
+        this.artist = artist;
         this.name = name;
         this.time = time;
     }
@@ -36,7 +39,7 @@ public class Album {
 
     public DataCard createCard() {
         if (dataCard == null) {
-            DataCard newData = new DataCard(CardGroupEnum.COLLECT_ALBUM, name);
+            DataCard newData = new DataCard(CardGroupEnum.COLLECT_ALBUM, name, artist);
             newData.setTime(time);
             dataCard = CrawlerUtils.mergeDataCard(newData);
         }

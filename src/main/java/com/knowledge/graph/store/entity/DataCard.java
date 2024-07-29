@@ -85,4 +85,9 @@ public class DataCard implements Serializable, IEntity {
     @TableField(exist = false)
     Boolean updated;
 
+    @Override
+    public boolean otherUpdateInfo(IEntity newData) {
+        return updateInfo(newData, e -> ((DataCard) e).getAnnotation(), (e, info) -> ((DataCard) e).setAnnotation(info));
+    }
+
 }

@@ -49,7 +49,8 @@ public class CrawlerMusic163SongImpl extends AbstractCrawler {
                 String musicId = musicHref.split("id=")[1];
                 String name = element.text();
 
-                songs.add(new Song(musicId, name));
+                // 同名的音乐存在可能性: 带上艺术家名字
+                songs.add(new Song(musicId, artist.getName(), name));
             } catch (Exception e) {
                 log.error("数据获取失败");
             }

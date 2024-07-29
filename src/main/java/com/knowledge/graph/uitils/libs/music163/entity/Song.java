@@ -18,13 +18,16 @@ public class Song {
 
     String id;
 
+    String artist;
+
     /**
-     * 专辑名称
+     * 歌曲名称
      */
     String name;
 
-    public Song(String id, String name) {
+    public Song(String id, String artist, String name) {
         this.id = id;
+        this.artist = artist;
         this.name = name;
     }
 
@@ -32,7 +35,7 @@ public class Song {
 
     public DataCard createCard() {
         if (dataCard == null) {
-            dataCard = CrawlerUtils.mergeDataCard(new DataCard(CardGroupEnum.THING_MUSIC, name));
+            dataCard = CrawlerUtils.mergeDataCard(new DataCard(CardGroupEnum.THING_MUSIC, name, artist));
         }
         return dataCard;
     }
