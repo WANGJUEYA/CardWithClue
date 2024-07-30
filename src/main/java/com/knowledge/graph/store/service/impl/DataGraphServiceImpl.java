@@ -1,5 +1,7 @@
 package com.knowledge.graph.store.service.impl;
 
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.knowledge.graph.common.constant.CardGroupEnum;
 import com.knowledge.graph.store.entity.DataCard;
 import com.knowledge.graph.store.entity.DataClue;
 import com.knowledge.graph.store.entity.DataGraph;
@@ -65,6 +67,36 @@ public class DataGraphServiceImpl implements IDataGraphService {
             log.error("抓取数据异常", e);
             return new DataGraph(List.of(), List.of());
         }
+    }
+
+    @Override
+    public DataGraph getDataGraphAuthor() {
+        List<DataCard> dataCards = dataCardService.list(Wrappers.lambdaQuery(DataCard.class)
+                .in(DataCard::getDataGroup, CardGroupEnum.THING_PERSON, CardGroupEnum.THING_BOOK));
+        List<DataClue> dataClues = dataClueService.list(Wrappers.lambdaQuery(DataClue.class)
+                .inSql(DataClue::getSource, "SELECT ID FROM DATA_CARD WHERE CARD_GROUP = 'THING_PERSON'")
+                .inSql(DataClue::getTarget, "SELECT ID FROM DATA_CARD WHERE CARD_GROUP = 'THING_BOOK'"));
+        return new DataGraph(dataCards, dataClues);
+    }
+
+    @Override
+    public DataGraph getDataGraphArtist() {
+        List<DataCard> dataCards = dataCardService.list(Wrappers.lambdaQuery(DataCard.class)
+                .in(DataCard::getDataGroup, CardGroupEnum.THING_PERSON, CardGroupEnum.THING_ALBUM, CardGroupEnum.THING_MUSIC));
+        List<DataClue> dataClues = dataClueService.list(Wrappers.lambdaQuery(DataClue.class)
+                .inSql(DataClue::getSource, "SELECT ID FROM DATA_CARD WHERE CARD_GROUP IN ('THING_PERSON', 'THING_ALBUM')")
+                .inSql(DataClue::getTarget, "SELECT ID FROM DATA_CARD WHERE CARD_GROUP IN ('THING_MUSIC', 'THING_ALBUM')"));
+        return new DataGraph(dataCards, dataClues);
+    }
+
+    @Override
+    public DataGraph getDataGraphArtistSong() {
+        List<DataCard> dataCards = dataCardService.list(Wrappers.lambdaQuery(DataCard.class)
+                .in(DataCard::getDataGroup, CardGroupEnum.THING_PERSON, CardGroupEnum.THING_MUSIC));
+        List<DataClue> dataClues = dataClueService.list(Wrappers.lambdaQuery(DataClue.class)
+                .inSql(DataClue::getSource, "SELECT ID FROM DATA_CARD WHERE CARD_GROUP = 'THING_PERSON'")
+                .inSql(DataClue::getTarget, "SELECT ID FROM DATA_CARD WHERE CARD_GROUP = 'THING_MUSIC'"));
+        return new DataGraph(dataCards, dataClues);
     }
 
 }

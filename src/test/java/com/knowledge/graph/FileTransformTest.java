@@ -65,7 +65,7 @@ public class FileTransformTest {
     @Test
     void contextLoads() throws IOException {
         List<DataCard> dataCards = dataCardService.list(Wrappers.lambdaQuery(DataCard.class)
-                .in(DataCard::getDataGroup, CardGroupEnum.THING_PERSON, CardGroupEnum.COLLECT_ALBUM, CardGroupEnum.THING_MUSIC));
+                .in(DataCard::getDataGroup, CardGroupEnum.THING_PERSON, CardGroupEnum.THING_ALBUM, CardGroupEnum.THING_MUSIC));
         List<DataClue> dataClues = dataClueService.list(Wrappers.lambdaQuery(DataClue.class)
                 .in(DataClue::getDataGroup, ClueGroupEnum.SINGER, ClueGroupEnum.COLLECT_ALBUM));
         Map<String, String> nameMap = dataCards.stream().collect(Collectors.toMap(e -> e.getDataGroup() + e.getKey(), DataCard::getId, (o, v) -> o));

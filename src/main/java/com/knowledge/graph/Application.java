@@ -16,7 +16,7 @@ public class Application {
         SpringApplication.run(Application.class, args);
 
         try {
-            Runtime.getRuntime().exec("cmd /c start http://localhost:8080");
+            Runtime.getRuntime().exec("cmd /c start http://localhost:8080?type=AUTHOR");
             Runtime.getRuntime().exec("cmd /c start http://localhost:8080/doc.html");
         } catch (IOException e) {
             e.printStackTrace();

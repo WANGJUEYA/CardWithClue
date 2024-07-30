@@ -10,4 +10,10 @@ public interface IDataGraphService {
 
     DataGraph refreshCrawler(AbstractCrawler crawler);
 
+    DataGraph getDataGraphAuthor();
+
+    DataGraph getDataGraphArtist();
+
+    DataGraph getDataGraphArtistSong();
+
 }

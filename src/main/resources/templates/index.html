@@ -26,8 +26,19 @@
     // };
 
     // const gData = await (await fetch('/screen/datasets')).json()
+    const url = document.location.toString();
+    const params = {};
+    if (url && url.includes("?")) {
+        url.split("?")[1].split("&")
+            .filter(i => i.includes("="))
+            .forEach(i => {
+                const item = i.split("=");
+                item?.[0]?.length && (params[item[0]] = item?.[1])
+            })
+    }
 
-    fetch('/screen/datasets').then(res => {
+    const reqUrl = '/screen/datasets' + (params?.type?.length ? ('/' + params.type) : '')
+    fetch(reqUrl).then(res => {
         res.json().then(data => {
             init(data.data)
         })
@@ -95,8 +106,8 @@
                 highlightLinks.clear();
                 if (node) {
                     highlightNodes.add(node);
-                    (node.neighbors||[]).forEach(neighbor => highlightNodes.add(neighbor));
-                    (node.links||[]).forEach(link => highlightLinks.add(link));
+                    (node.neighbors || []).forEach(neighbor => highlightNodes.add(neighbor));
+                    (node.links || []).forEach(link => highlightLinks.add(link));
                 }
 
                 hoverNode = node || null;

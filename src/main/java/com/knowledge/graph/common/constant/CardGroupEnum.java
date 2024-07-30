@@ -14,9 +14,7 @@ public enum CardGroupEnum {
     THING_MOVIE("事物-电影"),
     THING_DRAMA("事物-电视剧"),
     THING_GAME("事物-游戏"),
-
-    COLLECT("卡片集合"),
-    COLLECT_ALBUM("合集-音乐专辑"),
+    THING_ALBUM("事物-音乐专辑"),
 
     UNKNOWN("未定义"),
     ;

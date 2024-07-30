@@ -39,7 +39,7 @@ public class Album {
 
     public DataCard createCard() {
         if (dataCard == null) {
-            DataCard newData = new DataCard(CardGroupEnum.COLLECT_ALBUM, name, artist);
+            DataCard newData = new DataCard(CardGroupEnum.THING_ALBUM, name, artist);
             newData.setTime(time);
             dataCard = CrawlerUtils.mergeDataCard(newData);
         }
